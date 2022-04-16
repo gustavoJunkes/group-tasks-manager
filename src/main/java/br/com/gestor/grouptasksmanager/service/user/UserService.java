@@ -1,8 +1,7 @@
 package br.com.gestor.grouptasksmanager.service.user;
 
 import br.com.gestor.grouptasksmanager.exception.InvalidPasswordException;
-import br.com.gestor.grouptasksmanager.exception.NicknameAlreadyInUseException;
-import br.com.gestor.grouptasksmanager.model.user.PermissionEnum;
+import br.com.gestor.grouptasksmanager.exception.PropertyAlreadyInUseException;
 import br.com.gestor.grouptasksmanager.model.user.User;
 import br.com.gestor.grouptasksmanager.model.user.dto.SingupDto;
 import br.com.gestor.grouptasksmanager.repository.user.UserRepository;
@@ -24,36 +23,49 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public SingupDto singUp(SingupDto user) throws NicknameAlreadyInUseException, InvalidPasswordException {
-
+    // TODO: 16/04/2022 solve the throwable issue here, this exceptions may dont need to be dealed with 
+    public SingupDto singUp(SingupDto user) throws InvalidPasswordException, PropertyAlreadyInUseException {
+        user.id = null;
+        if(user.id == null) {
+            throw new NullPointerException("deu ruim meu consagrado");
+        }
         User newUser = User.builder()
+                .firstName(user.firstName)
+                .lastName(user.lastName)
                 .nickname(user.nickname)
                 .login(user.login)
                 .password(user.password)
-                .permissionEnum(PermissionEnum.NORMAL)
                 .build();
         canRegister(newUser);
-        userRepository.save(newUser);
+        newUser = userRepository.save(newUser);
         return SingupDto.builder()
+                .firstName(newUser.getFirstName())
+                .lastName(newUser.getLastName())
                 .nickname(newUser.getNickname())
                 .login(newUser.getLogin())
-                .password(newUser.getPassword())
+                .password(newUser.getPassword()).id(newUser.getId())
                 .build();
     }
 
-    private void canRegister(User user) throws NicknameAlreadyInUseException, InvalidPasswordException {
+    private void canRegister(User user) throws PropertyAlreadyInUseException, InvalidPasswordException {
 
         if ( user.getPassword() == null || user.getPassword().isEmpty()) {
             throw new InvalidPasswordException("The given password is not valid");
         }
 
-        if(nickNameExists(user.getNickname())){
-            throw new NicknameAlreadyInUseException("Nickname already in use");
+        if(nicknameExists(user.getNickname())){
+            throw new PropertyAlreadyInUseException("Nickname already in use");
+        } else if(loginAlreadyExists(user.getLogin())){
+            throw new PropertyAlreadyInUseException("Login already in use");
         }
     }
 
-    private boolean nickNameExists(String nickname){
-        return userRepository.findAllByNickname(nickname);
+    private boolean nicknameExists(String nickname){
+        return userRepository.existsByNickname(nickname);
+    }
+
+    private boolean loginAlreadyExists(String login){
+        return userRepository.existsByLogin(login);
     }
 }
 
