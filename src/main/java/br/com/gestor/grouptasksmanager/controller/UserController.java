@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping("/singup")
-    public ResponseEntity<SingupDto> singUp(@RequestBody SingupDto user) throws PropertyAlreadyInUseException, InvalidPasswordException {
+    public ResponseEntity<SingupDto> singUp(@RequestBody SingupDto user) {
        return new ResponseEntity<>(userService.singUp(user), HttpStatus.CREATED);
     }
 }
