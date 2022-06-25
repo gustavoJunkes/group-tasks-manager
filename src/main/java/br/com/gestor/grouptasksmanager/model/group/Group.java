@@ -8,10 +8,12 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 @Data
-@Entity
+@Entity(name = "tb_group")
 @Builder
 public class Group {
 
@@ -24,7 +26,7 @@ public class Group {
     private List<UserGroup> users;
 
     @OneToMany
-    private List<Task> tasks;
+    private List<Task> tasks = new ArrayList<>();
 
     @ManyToOne
     public User groupCreator;

@@ -13,6 +13,7 @@ import java.util.UUID;
 public class UserGroup {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne

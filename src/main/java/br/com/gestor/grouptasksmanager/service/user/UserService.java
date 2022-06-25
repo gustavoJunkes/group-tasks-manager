@@ -23,12 +23,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // TODO: 16/04/2022 solve the throwable issue here, this exceptions may dont need to be dealed with 
+    // TODO: 16/04/2022 solve the throwable issue here, this exceptions may dont need to be dealed with
     public SingupDto singUp(SingupDto user) throws InvalidPasswordException, PropertyAlreadyInUseException {
         user.id = null;
-        if(user.id == null) {
-            throw new NullPointerException("deu ruim meu consagrado");
-        }
         User newUser = User.builder()
                 .firstName(user.firstName)
                 .lastName(user.lastName)
