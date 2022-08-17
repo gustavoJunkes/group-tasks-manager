@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "usu")
 @Builder
 @Data
 @NoArgsConstructor
@@ -19,16 +17,19 @@ import java.util.UUID;
 public class User {
 
     @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    private String nickname;
+    private String firstName;
 
+    private String lastName;
+
+    private String nickname;
+    @Column(unique = true, nullable = false)
     private String login;
 
    private String password;
-
-    @Enumerated(EnumType.STRING)
-    private PermissionEnum permissionEnum;
 
     public User(String nickname, String login, String password) {
         this.login = login;
